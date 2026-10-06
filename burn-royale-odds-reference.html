@@ -1,0 +1,447 @@
+<title>Burn Royale Odds</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0b0a08;
+    --surface: #16120f;
+    --surface-2: #1e1813;
+    --border: #2c241c;
+    --gold: #e8b568;
+    --gold-deep: #c9862f;
+    --ember: #ff6b45;
+    --text: #f5efe6;
+    --text-dim: #a89a89;
+    --text-faint: #675c50;
+    --bar-track: #241d17;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 28px 80px;
+  }
+
+  /* ---------- Header ---------- */
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+  }
+
+  h1 {
+    font-family: 'Anton', 'Arial Narrow', sans-serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 68px);
+    line-height: 0.96;
+    letter-spacing: 0.01em;
+    margin: 0;
+    text-wrap: balance;
+    background: linear-gradient(120deg, #fff3de 0%, var(--gold) 45%, var(--gold-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+  }
+
+  .sub {
+    max-width: 62ch;
+    color: var(--text-dim);
+    font-size: 16px;
+  }
+
+  /* ---------- Shared mechanics strip ---------- */
+
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+
+  .strip-item {
+    background: var(--surface);
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .strip-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .strip-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--gold);
+  }
+
+  .strip-value small {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-dim);
+  }
+
+  /* ---------- Game panels ---------- */
+
+  .games {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .games { grid-template-columns: 1fr; }
+  }
+
+  .game {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .game-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .game-name {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 26px;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+
+  .win-chance {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .win-chance b {
+    color: var(--gold);
+    font-size: 15px;
+  }
+
+  .badge {
+    align-self: flex-start;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ember);
+    border: 1px solid rgba(255, 107, 69, 0.4);
+    background: rgba(255, 107, 69, 0.08);
+    padding: 4px 8px;
+    border-radius: 5px;
+    margin-top: -10px;
+  }
+
+  /* Probability bar */
+
+  .bar-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .bar {
+    display: flex;
+    height: 34px;
+    width: 100%;
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--bar-track);
+    border: 1px solid var(--border);
+  }
+
+  .seg {
+    height: 100%;
+    position: relative;
+    min-width: 2px;
+  }
+
+  .seg.loss { background: var(--bar-track); }
+  .seg.tier1 { background: linear-gradient(180deg, #a8763c, var(--gold-deep)); }
+  .seg.tier2 { background: linear-gradient(180deg, #f0c988, var(--gold)); }
+  .seg.tier3 { background: linear-gradient(180deg, #ff9a6b, var(--ember)); }
+  .seg.win { background: linear-gradient(180deg, #f0c988, var(--gold)); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-dim);
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  .swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .swatch.loss { background: var(--text-faint); }
+  .swatch.tier1 { background: var(--gold-deep); }
+  .swatch.tier2 { background: var(--gold); }
+  .swatch.tier3 { background: var(--ember); }
+
+  /* Payout table */
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  thead th {
+    text-align: left;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    font-weight: 500;
+    padding: 0 0 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th:last-child, tbody td:last-child { text-align: right; }
+
+  tbody td {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody td:first-child { color: var(--text-dim); font-family: 'IBM Plex Sans', sans-serif; }
+
+  .mult { color: var(--gold); font-weight: 600; }
+
+  .foot {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+
+  .foot b { color: var(--text); }
+
+  footer {
+    margin-top: 48px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    max-width: 70ch;
+  }
+
+  footer a { color: var(--gold-deep); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">ZeroBois &middot; Proof of Burn</div>
+    <h1>The house rules,<br>written down</h1>
+    <p class="sub">Every win chance and payout across the three ZeroBois games, read straight out of the live game code &mdash; not the marketing copy.</p>
+  </header>
+
+  <div class="strip">
+    <div class="strip-item">
+      <div class="strip-label">Team share</div>
+      <div class="strip-value">1.5% <small>off every burn, all games</small></div>
+    </div>
+    <div class="strip-item">
+      <div class="strip-label">Payout cap</div>
+      <div class="strip-value">40% <small>of pot, max single win</small></div>
+    </div>
+    <div class="strip-item">
+      <div class="strip-label">Bet limits</div>
+      <div class="strip-value">Min &ndash; Max <small>set per token, max scales with pot</small></div>
+    </div>
+  </div>
+
+  <div class="games">
+
+    <!-- Burn Royale -->
+    <section class="game">
+      <div>
+        <div class="game-head">
+          <h2 class="game-name">Burn Royale</h2>
+          <div class="win-chance"><b>50.9%</b> win</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="bar-label-row"><span>Outcome odds, to scale</span><span>10,000 burns</span></div>
+        <div class="bar">
+          <div class="seg loss" style="width: 49.08%"></div>
+          <div class="seg tier1" style="width: 48%"></div>
+          <div class="seg tier2" style="width: 2.53%"></div>
+          <div class="seg tier3" style="width: 0.39%"></div>
+        </div>
+        <div class="legend" style="margin-top:10px;">
+          <div class="legend-item"><span class="swatch loss"></span>No win 49.1%</div>
+          <div class="legend-item"><span class="swatch tier1"></span>Micro/Small 48%</div>
+          <div class="legend-item"><span class="swatch tier2"></span>Big 2.53%</div>
+          <div class="legend-item"><span class="swatch tier3"></span>Huge/Jackpot 0.39%</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Tier</th><th>Chance</th><th>Payout</th></tr></thead>
+        <tbody>
+          <tr><td>No win</td><td>49.08%</td><td>&mdash;</td></tr>
+          <tr><td>Micro / Small</td><td>48.00%</td><td class="mult">1.0&ndash;1.4x</td></tr>
+          <tr><td>Big</td><td>2.53%</td><td class="mult">5&ndash;12x</td></tr>
+          <tr><td>Huge</td><td>0.29%</td><td class="mult">20&ndash;35x</td></tr>
+          <tr><td>Jackpot</td><td>0.10%</td><td class="mult">35&ndash;50x</td></tr>
+        </tbody>
+      </table>
+
+      <div class="foot">
+        <div>Reels are <b>cosmetic</b> &mdash; the outcome is decided before they spin.</div>
+        <div>One roll picks the tier, a second sets where you land inside it.</div>
+      </div>
+    </section>
+
+    <!-- Coin Flip -->
+    <section class="game">
+      <div>
+        <div class="game-head">
+          <h2 class="game-name">Coin Flip</h2>
+          <div class="win-chance"><b>50.0%</b> win</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="bar-label-row"><span>Outcome odds, to scale</span><span>true coin</span></div>
+        <div class="bar">
+          <div class="seg loss" style="width: 50%"></div>
+          <div class="seg win" style="width: 50%"></div>
+        </div>
+        <div class="legend" style="margin-top:10px;">
+          <div class="legend-item"><span class="swatch loss"></span>Lose 50%</div>
+          <div class="legend-item"><span class="swatch tier2"></span>Win 50%</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Tier</th><th>Chance</th><th>Payout</th></tr></thead>
+        <tbody>
+          <tr><td>Wrong call</td><td>50.00%</td><td>&mdash;</td></tr>
+          <tr><td>Right call</td><td>50.00%</td><td class="mult">1.9x</td></tr>
+        </tbody>
+      </table>
+
+      <div class="foot">
+        <div>The only <b>true 50/50</b> of the three &mdash; call it, flip it.</div>
+        <div>Paid at 1.9x, not 2x &mdash; that 0.1x is the whole house edge.</div>
+      </div>
+    </section>
+
+    <!-- Slot Machine -->
+    <section class="game">
+      <div>
+        <div class="game-head">
+          <h2 class="game-name">Slot Machine</h2>
+          <div class="win-chance"><b>50.9%</b> win</div>
+        </div>
+        <div class="badge">Same roll as Burn Royale</div>
+      </div>
+
+      <div>
+        <div class="bar-label-row"><span>Outcome odds, to scale</span><span>10,000 spins</span></div>
+        <div class="bar">
+          <div class="seg loss" style="width: 49.08%"></div>
+          <div class="seg tier1" style="width: 48%"></div>
+          <div class="seg tier2" style="width: 2.53%"></div>
+          <div class="seg tier3" style="width: 0.39%"></div>
+        </div>
+        <div class="legend" style="margin-top:10px;">
+          <div class="legend-item"><span class="swatch loss"></span>No win 49.1%</div>
+          <div class="legend-item"><span class="swatch tier1"></span>Micro/Small 48%</div>
+          <div class="legend-item"><span class="swatch tier2"></span>Big 2.53%</div>
+          <div class="legend-item"><span class="swatch tier3"></span>Huge/Jackpot 0.39%</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Tier</th><th>Chance</th><th>Payout</th></tr></thead>
+        <tbody>
+          <tr><td>No win</td><td>49.08%</td><td>&mdash;</td></tr>
+          <tr><td>Micro / Small</td><td>48.00%</td><td class="mult">1.0&ndash;1.4x</td></tr>
+          <tr><td>Big</td><td>2.53%</td><td class="mult">5&ndash;12x</td></tr>
+          <tr><td>Huge</td><td>0.29%</td><td class="mult">20&ndash;35x</td></tr>
+          <tr><td>Jackpot</td><td>0.10%</td><td class="mult">35&ndash;50x</td></tr>
+        </tbody>
+      </table>
+
+      <div class="foot">
+        <div>Reel count (2&ndash;5 flames) just <b>illustrates</b> the tier you already won.</div>
+        <div>No independent paytable &mdash; it's a Burn Royale reskin.</div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    Source: <code>rollOutcome()</code> in burn-royale&nbsp;TEST.html, burn-royale-coinflip.html and burn-slot-real-odds.html. Odds reflect the code as written at time of reading &mdash; re-check after any game-logic change.
+  </footer>
+
+</div>
